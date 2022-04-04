@@ -37,3 +37,5 @@ model had predicting the outcome of the rolls, the conclusion is that it
 is random (enough) for us to say it is random.
 
 ![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+Updated: 04/04/2022 at 1946
