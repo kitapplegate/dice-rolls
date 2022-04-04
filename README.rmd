@@ -1,0 +1,126 @@
+---
+title: "Dice Rolls"
+author: "Kit Applegate"
+date: "4/4/2022"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analysis of Daily Dice Rolls Over Two Year Period
+Rolls by Eric Prufer
+
+```{r libraries, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(lubridate)
+library(scales)
+
+rolls <- read.csv("daily.Rolls.csv")
+
+rolls$Date <- as_date(dmy(rolls$Date))
+
+rolls$Weekdays <- weekdays(rolls$Date)
+
+rolls$Month.Name <- months(as.Date(rolls$Date))
+
+rolls <- rolls %>%
+  dplyr::mutate(year = lubridate::year(Date), 
+                month = lubridate::month(Date), 
+                day = lubridate::day(Date))
+
+```
+
+## Distribution
+
+First, the distribution was examined. As observed, it is pretty even across all days of the week. 
+
+```{r Data Exploration, echo=FALSE, message=FALSE, warning=FALSE}
+library(viridis)
+
+
+
+rolls %>%
+  mutate(Weekdays = factor(Weekdays, 
+                           levels = c("Monday", "Tuesday", "Wednesday",
+                                      "Thursday", "Friday", "Saturday",
+                                      "Sunday"))) %>%
+  ggplot(aes(x = Weekdays, y = Roll, fill = Weekdays)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter() +
+  labs(title = "Box and Whisker Plot with a Point Plot Depicting Rolls by Weekday",
+       subtitle = "Rolls by Eric Prufer",
+       x = "Side Landed on When Rolled", 
+       y = "Day of the Week") +
+  theme_classic() +
+  theme(legend.position="none")
+  
+
+
+
+
+```
+
+There is more variation across months as observed in the plot below.  
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+rolls %>%
+  mutate(Month.Name = factor(Month.Name, 
+                           levels = c("January","February", "March", "April", "May",
+                                      "June", "July", "August", "September", "October",
+                                      "November", "December"))) %>%
+  ggplot(aes(x = Month.Name, y = Roll, fill = Month.Name)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter() +
+  coord_flip() +
+  labs(title = "Box and Whisker Plot with a Point Plot Depicting Rolls by Month",
+       subtitle = "Rolls by Eric Prufer",
+       x = "", 
+       y = "Side Landed on When Rolled") +
+  theme(legend.position="none") +
+  theme_classic() +
+  theme(legend.position="none")
+```
+
+
+Here we observe the number of times a side was rolled. On a d20 the values of each number are weighted the same. Unlike, for example, a 2d6 is inherently higher weighted to roll certain sides. We can observe there is not a pattern forming across each of the sides.     
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+rolls %>%
+  ggplot(aes(x = Roll)) +
+  geom_histogram(binwidth=1, color = "#481567ff", fill = "#3cbb75ff", alpha=0.7) +
+  labs(title = "Histogram of the Distribution of Rolls",
+     subtitle = "Rolls by Eric Prufer", 
+     x = "Side Landed on When Rolled", 
+     y = "Number of Rolls") +
+  theme_classic()
+  
+ 
+
+```
+
+## Linear Trend
+
+Last,  we can observe no linear trend. Meaning it is observed as random. There have been studies of the actual randomness of physical dice rolls. One study mentioned in *Inside Science* "Dice Rolls are Not Completely Random", indicates surface, which number is face up on the dice and a number of other factors can influence the outcome of the roll. For the sake of the non-scientific nature and the difficultly the regression model had predicting the outcome of the rolls, the conclusion is that it is random (enough) for us to say it is random.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(rolls, aes(x = Roll, y = day)) +
+  geom_jitter() +
+  geom_smooth(method=lm , color="#481567ff", fill="#3cbb75ff", se=TRUE) +
+  labs(title = "Linear Trend Plot",
+       subtitle = "Rolls by Eric Prufer", 
+       x = "Side Landed on When Rolled", 
+       y = "Day of the Month") +
+  theme_classic()
+
+
+```
+
+
