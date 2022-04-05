@@ -39,3 +39,7 @@ is random (enough) for us to say it is random.
 ![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 Updated: 04/04/2022 at 1950
+
+*Dice rolls are not completely random.* Inside Science. (n.d.).
+Retrieved April 4, 2022, from
+<https://www.insidescience.org/news/dice-rolls-are-not-completely-random>
